@@ -23,7 +23,8 @@ const MENU_ITEMS = [
     type: 'icecream' as const,
     title: 'Choco Blast',
     price: 18000,
-    image: 'https://www.tasteofhome.com/wp-content/uploads/2018/01/Easy-Chocolate-Ice-Cream_EXPS_TOHVP24_4798_MF_06_06_1.jpg',
+    image:
+      'https://www.tasteofhome.com/wp-content/uploads/2018/01/Easy-Chocolate-Ice-Cream_EXPS_TOHVP24_4798_MF_06_06_1.jpg',
     description: 'Rich dark chocolate with chips',
   },
   {
@@ -116,20 +117,18 @@ export default function Menu() {
 
   return (
     <div className="app-container flex flex-col h-full bg-slate-50 relative">
-      {/* Header */}
-
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 z-10 relative">
+      <main className="flex-1 overflow-y-auto p-4">
         <SplitBackground />
 
-        <section className="p-4 mb-4 z-20 flex items-center gap-4 sticky top-0">
+        <section className="p-4 mb-4 z-20 flex items-center gap-4 relative top-0">
           <button
             onClick={() => setLocation('/welcome')}
             className="flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             <ChevronLeftCircleIcon className="text-[#f2c552] w-10 h-10" />
           </button>
-          <h1 className="text-[#f2c552] text-5xl font-display font-bold text-chalk flex-1 text-center">Pre-Order</h1>
+          <h1 className="text-[#f2c552] text-4xl font-display font-bold text-chalk flex-1 text-center">Pre-Order</h1>
           <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
             <ChefHat className="text-blue-500 w-6 h-6" />
           </div>

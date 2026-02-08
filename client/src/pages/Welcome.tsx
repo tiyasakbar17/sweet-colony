@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { SplitBackground } from '@/components/SplitBackground';
+import CountdownTimer from '@/components/CountdownTimer';
 import { Instagram, MessageCircle } from 'lucide-react';
 
 export default function Welcome() {
@@ -8,25 +9,25 @@ export default function Welcome() {
     <div className="app-container relative flex flex-col items-center justify-center">
       <SplitBackground />
 
-      <div className="relative z-10 flex flex-col items-center p-8 text-center space-y-8 w-full">
+      <div className="relative z-10 flex flex-col items-center p-8 text-center space-y-8 w-full overflow-auto">
         {/* Title Text */}
-        <div className="space-y-2">
-          <motion.h1
+        <div className="space-y-2 pt-3 ">
+          <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-5xl font-bold text-[#f2c552] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tight"
             style={{ fontFamily: 'Fredoka, sans-serif' }}
           >
-            Welcome to..
-          </motion.h1>
+            <img src="/assets/sweet_colony.svg" alt="Sweet Colony" />
+          </motion.div>
         </div>
         {/* Logo Area */}
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', bounce: 0.5, duration: 1 }}
-          className="relative !mt-0"
+          className="relative !mt-4"
         >
           <div className="w-64 h-64 flex items-center justify-center">
             <img
@@ -40,27 +41,15 @@ export default function Welcome() {
           </div>
         </motion.div>
 
-        {/* Title Text */}
-        <div className="!mt-0">
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-[#f2c552] text-lg font-medium drop-shadow-md"
-          >
-            Where Crunch meets Creamy
-          </motion.p>
-        </div>
-
         {/* Date and School Info */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="space-y-1"
+          className="space-y-1 !mt-3"
         >
-          <p className="text-[#f2c552] text-xl font-bold drop-shadow-md">24 Februari 2026</p>
-          <p className="text-[#f2c552]/90 text-lg font-medium drop-shadow-md">SMAK 6 Penabur</p>
+          <p className="text-[#f2c552] text-xl font-bold drop-shadow-md backdrop-blur-md rounded-[10px]">24 Februari 2026</p>
+          <p className="text-[#f2c552]/90 text-lg font-medium drop-shadow-md backdrop-blur-md rounded-[10px]">SMAK 6 Penabur</p>
         </motion.div>
 
         {/* Social Media Icons */}
@@ -68,23 +57,23 @@ export default function Welcome() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="flex gap-4"
+          className="flex gap-4 !mt-3"
         >
           <a
             href="https://instagram.com/sweetcolony"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white/90 backdrop-blur-md p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
+            className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
           >
-            <Instagram className="w-6 h-6 text-pink-600" />
+            <Instagram className="w-12 h-12 text-white" />
           </a>
           <a
             href="https://wa.me/6281234567890"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white/90 backdrop-blur-md p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
+            className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
           >
-            <MessageCircle className="w-6 h-6 text-green-600" />
+            <MessageCircle className="w-12 h-12 text-white" />
           </a>
         </motion.div>
 
@@ -134,6 +123,9 @@ export default function Welcome() {
             </motion.button>
           </Link>
         </div>
+
+        {/* Countdown Timer */}
+        <CountdownTimer targetDate="2026-02-24T00:00:00" />
       </div>
     </div>
   );

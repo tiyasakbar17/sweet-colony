@@ -15,7 +15,7 @@ export default function Landing() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-5xl font-bold text-[#f2c552] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tight"
+            className="text-5xl font-bold text-[#f2c552] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tight backdrop-blur-md rounded-[10px]"
             style={{ fontFamily: 'Fredoka, sans-serif' }}
           >
             Welcome to..
@@ -46,7 +46,7 @@ export default function Landing() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-[#f2c552] text-lg font-medium drop-shadow-md"
+            className="text-[#f2c552] text-lg font-medium drop-shadow-md backdrop-blur-md rounded-[10px]"
           >
             Where Crunch meets Creamy
           </motion.p>

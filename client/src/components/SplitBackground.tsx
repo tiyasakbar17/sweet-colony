@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 
-export function SplitBackground() {
+const SplitBackground = memo(() => {
   const [iceCubes, setIceCubes] = useState<number[]>([]);
   const [drips, setDrips] = useState<number[]>([]);
 
@@ -12,7 +12,9 @@ export function SplitBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 flex z-0 pointer-events-none opacity-90">
+    <div className="absolute inset-0 flex z-0 pointer-events-none opacity-90">      
+    {/* Dark Overlay */}
+    <div className="absolute inset-0 bg-black/20 z-[5]" />
       {/* Left Side - Blue/Ice */}
       <div className="w-1/2 h-full bg-blue-500 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-400 to-blue-600 opacity-90" />
@@ -148,4 +150,8 @@ export function SplitBackground() {
       <div className="absolute left-1/2 top-0 bottom-0 w-px bg-black/10 shadow-[0_0_20px_10px_rgba(0,0,0,0.2)]" />
     </div>
   );
-}
+});
+
+SplitBackground.displayName = 'SplitBackground';
+
+export { SplitBackground };
