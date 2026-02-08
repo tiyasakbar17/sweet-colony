@@ -1,14 +1,10 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
-import * as schema from "@shared/schema";
+/**
+ * This file is deprecated.
+ * The app now uses in-memory storage only (see server/storage.ts).
+ * No database connection is required.
+ * 
+ * You can safely delete this file.
+ */
 
-const { Pool } = pg;
-
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
-
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool, { schema });
+export const pool = null;
+export const db = null;

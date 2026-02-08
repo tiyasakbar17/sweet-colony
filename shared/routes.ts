@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertOrderSchema, orders } from './schema';
+import { insertOrderSchema, orderSchema  } from './schema';
 
 export const errorSchemas = {
   validation: z.object({
@@ -21,7 +21,7 @@ export const api = {
       path: '/api/orders' as const,
       input: insertOrderSchema,
       responses: {
-        201: z.custom<typeof orders.$inferSelect>(),
+        201: z.custom<typeof orderSchema>(),
         400: errorSchemas.validation,
       },
     },

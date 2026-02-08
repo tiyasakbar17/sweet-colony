@@ -1,4 +1,4 @@
-import { orders, type Order, type InsertOrder } from "@shared/schema";
+import { type Order, type InsertOrder } from "@shared/schema";
 
 export interface IStorage {
   createOrder(order: InsertOrder): Promise<Order>;

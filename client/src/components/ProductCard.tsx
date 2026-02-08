@@ -30,9 +30,9 @@ export function ProductCard({ type, title, price, image, onClick }: ProductCardP
     >
       <div className="p-4 flex flex-col items-center text-center space-y-3">
         {/* Image Placeholder or Actual Image */}
-        <div className="w-24 h-24 rounded-full bg-white/80 shadow-inner flex items-center justify-center text-4xl mb-2 relative z-10">
+        <div className="w-24 h-24 rounded-full bg-white/80 shadow-inner flex items-center justify-center text-4xl mb-2 relative z-10 overflow-hidden">
           {image ? (
-            <img src={image} alt={title} className="w-20 h-20 object-contain drop-shadow-md" />
+            <img src={image} alt={title} className="w-full h-full object-cover drop-shadow-md" />
           ) : (
             <span>{isIce ? '🍦' : '🍟'}</span>
           )}
