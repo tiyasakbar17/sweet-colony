@@ -1,0 +1,67 @@
+Build a mobile-first "Pre-order Food Website" using Next.js, Tailwind CSS, and Framer Motion. 
+
+**Core Concept:**
+A food stall app named "Sweet Colony" (concept: Crunch meets Creamy). 
+The app is Frontend-only. Use React Context and LocalStorage to save the cart state so data persists on reload.
+
+**Design System & UI Constraints:**
+1.  **Mobile Restriction:** The entire UI must be restricted to a "mobile view" width (max-w-md mx-auto), centered on the screen with a dark backdrop outside the app container.
+2.  **Split Background (Crucial):** 
+    -   The background must be vertically split 50/50. 
+    -   **Left Side (Blue):** Represents "Ice/Creamy". It must have an animation of **falling ice cubes** in the background.
+    -   **Right Side (Red):** Represents "Fries/Crunch". It must have an animation of **falling sauce/drizzle** (viscous liquid effect) in the background.
+    -   Use Framer Motion or CSS keyframes for these infinite loop animations.
+3.  **Theme:** Playful, using a "Blackboard/Chalkboard" aesthetic for the main content containers (menus, forms) as seen in reference images. Font style should be handwritten or rounded (like 'Comic Neue' or similar).
+
+**User Flow & Pages:**
+
+1.  **Landing Page:**
+    -   Logo: "Sweet Colony" (Ice cream sandwich + Fries icon).
+    -   Split background visible.
+    -   "Open" or "Order Now" button.
+
+2.  **Menu Page (The Blackboard):**
+    -   Display menu items as **Cards** inside a Blackboard container.
+    -   **Items:** 
+        -   Card 1: Ice Cream (Image, Name, Price).
+        -   Card 2: French Fries (Image, Name, Price).
+    -   **Action:** "Add to Cart" button on each card.
+    -   **Popup Logic:** When "Add to Cart" is clicked, open a Modal/Popup:
+        -   **For Ice Cream:** Select Flavor (e.g., Vanilla, Chocolate, Taro).
+        -   **For Fries:** Select Size (S, M, L) and Seasoning (e.g., BBQ, Cheese, Balado).
+        -   Selector inputs should look like stylized dropdowns.
+        -   "Confirm Add" button adds to global cart.
+    -   **Floating Cart:** A floating icon in the bottom right with a red badge number showing total unique items.
+
+3.  **Cart Page:**
+    -   List all items added.
+    -   **Differentiation:** If a user adds "Ice Cream (Vanilla)" and then "Ice Cream (Chocolate)", these must appear as two separate lines in the cart.
+    -   Ability to remove items.
+    -   Show Total Price.
+    -   "Checkout" button.
+
+4.  **Checkout / User Info Page (Important Logic):**
+    -   **Form fields:** Name, Class (or Table Number), WhatsApp Number.
+    -   **Payment Method Selector:** Dropdown with options "Cash/COD" and "Transfer".
+    -   **Conditional Logic:**
+        -   **If "Transfer" is selected:** 
+            -   Show Bank Details (Bank Name: BCA, Account: [Placeholder numbers], Name: [Placeholder Name]).
+            -   Show a File Input for "Upload Payment Proof". 
+            -   **File Input Behavior:** This must be clickable. When a user selects an image, display a **local preview** of that image immediately below the button (using `URL.createObjectURL` or similar). Do not attempt to upload to a real server; just handle the UI state.
+        -   **If "Cash/COD" is selected:** 
+            -   Hide the Bank Details and the File Upload button.
+    -   **"Place Order" Button Logic (WhatsApp):**
+        -   When clicked, validate fields.
+        -   Format the order data into a text string: 
+            "Hello Sweet Colony! I want to order: [List of items with flavors/sizes]. Name: [Name], Class: [Class], Payment: [Method], Total: [Price]".
+        -   Encode this text and open `https://wa.me/[YOUR_PHONE_NUMBER]?text=[Encoded_Message]`.
+        -   Clear LocalStorage and redirect to Success page.
+
+5.  **Success Page:**
+    -   "Thank you for ordering" message.
+    -   Button to go back home.
+
+**Technical Requirements:**
+-   Use `lucide-react` for icons.
+-   Ensure the falling animations (ice and sauce) do not interfere with text readability.
+-   Make sure the "Blackboard" container has a wooden border effect if possible.
