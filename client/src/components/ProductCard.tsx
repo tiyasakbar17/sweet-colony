@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
@@ -9,7 +10,7 @@ interface ProductCardProps {
   onClick: () => void;
 }
 
-export function ProductCard({ type, title, price, image, onClick }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ type, title, price, image, onClick }: ProductCardProps) {
   const isIce = type === 'icecream';
   const bgColor = isIce ? 'bg-blue-100' : 'bg-red-100';
   const borderColor = isIce ? 'border-blue-300' : 'border-red-300';
@@ -57,4 +58,4 @@ export function ProductCard({ type, title, price, image, onClick }: ProductCardP
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-black to-transparent" />
     </motion.div>
   );
-}
+});

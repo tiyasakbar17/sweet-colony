@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
+import { memo, useMemo } from 'react';
 import { SplitBackground } from '@/components/SplitBackground';
 import CountdownTimer from '@/components/CountdownTimer';
 import { Instagram, MessageCircle } from 'lucide-react';
 
-export default function Welcome() {
+const Welcome = memo(function Welcome() {
   return (
     <div className="app-container relative flex flex-col items-center justify-center">
       <SplitBackground />
@@ -53,29 +54,7 @@ export default function Welcome() {
         </motion.div>
 
         {/* Social Media Icons */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="flex gap-4 !mt-3"
-        >
-          <a
-            href="https://instagram.com/sweetcolony"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
-          >
-            <Instagram className="w-12 h-12 text-white" />
-          </a>
-          <a
-            href="https://wa.me/6281234567890"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
-          >
-            <MessageCircle className="w-12 h-12 text-white" />
-          </a>
-        </motion.div>
+        <SocialIcons />
 
         {/* Action Buttons */}
         <div className="w-full max-w-xs space-y-3">
@@ -129,4 +108,37 @@ export default function Welcome() {
       </div>
     </div>
   );
-}
+});
+
+Welcome.displayName = 'Welcome';
+
+// Memoized social icons to prevent re-renders
+const SocialIcons = memo(function SocialIcons() {
+  return (
+    <motion.div
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.7 }}
+      className="flex gap-4 !mt-3"
+    >
+      <a
+        href="https://instagram.com/sweetcolony"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
+      >
+        <Instagram className="w-12 h-12 text-white" />
+      </a>
+      <a
+        href="https://wa.me/6281284914453"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
+      >
+        <MessageCircle className="w-12 h-12 text-white" />
+      </a>
+    </motion.div>
+  );
+});
+
+export default Welcome;

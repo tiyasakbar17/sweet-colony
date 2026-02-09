@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { ShoppingCart, ChefHat, IceCream, ArrowLeft, Minus, Plus, ChevronLeftCircleIcon } from 'lucide-react';
+import { ShoppingCart, ChefHat, IceCream, Minus, Plus, ChevronLeftCircleIcon } from 'lucide-react';
 import { SplitBackground } from '@/components/SplitBackground';
 import { ProductCard } from '@/components/ProductCard';
 import { BlackboardModal } from '@/components/BlackboardModal';
@@ -71,16 +71,27 @@ export default function Menu() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  const handleOpenModal = (item: (typeof MENU_ITEMS)[0]) => {
+  // Memoize filtered menu items to prevent recalculation
+  const iceCreamItems = useMemo(() => MENU_ITEMS.filter((i) => i.type === 'icecream'), []);
+  const friesItems = useMemo(() => MENU_ITEMS.filter((i) => i.type === 'fries'), []);
+  
+  // Memoize cart count calculation
+  const cartCount = useMemo(() => items.reduce((acc, item) => acc + item.quantity, 0), [items]);
+
+  const handleOpenModal = useCallback((item: (typeof MENU_ITEMS)[0]) => {
     setSelectedItem(item);
     // Set default size
     const defaultSize = SIZES[item.type][0].label;
     setSelectedSize(defaultSize);
     setSelectedAddons([]);
     setQuantity(1); // Reset quantity to 1
-  };
+  }, []);
 
-  const handleAddToCart = () => {
+  const handleCloseModal = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
+
+  const handleAddToCart = useCallback(() => {
     if (!selectedItem) return;
 
     // Calculate extra price from size
@@ -103,17 +114,23 @@ export default function Menu() {
     });
 
     setSelectedItem(null);
-  };
+  }, [selectedItem, selectedSize, selectedAddons, quantity, addItem, toast]);
 
-  const toggleAddon = (addon: string) => {
+  const toggleAddon = useCallback((addon: string) => {
     if (selectedAddons.includes(addon)) {
       setSelectedAddons((prev) => prev.filter((a) => a !== addon));
     } else {
       setSelectedAddons((prev) => [...prev, addon]);
     }
-  };
+  }, [selectedAddons]);
 
-  const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const handleNavigateToWelcome = useCallback(() => {
+    setLocation('/welcome');
+  }, [setLocation]);
+
+  const handleNavigateToCart = useCallback(() => {
+    setLocation('/cart');
+  }, [setLocation]);
 
   return (
     <div className="app-container flex flex-col h-full bg-slate-50 relative">
@@ -123,7 +140,7 @@ export default function Menu() {
 
         <section className="p-4 mb-4 z-20 flex items-center gap-4 relative top-0">
           <button
-            onClick={() => setLocation('/welcome')}
+            onClick={handleNavigateToWelcome}
             className="flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             <ChevronLeftCircleIcon className="text-[#f2c552] w-10 h-10" />
@@ -141,7 +158,7 @@ export default function Menu() {
                 <IceCream className="w-6 h-6" /> Creamy Selection
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {MENU_ITEMS.filter((i) => i.type === 'icecream').map((item) => (
+                {iceCreamItems.map((item) => (
                   <ProductCard key={item.id} {...item} onClick={() => handleOpenModal(item)} />
                 ))}
               </div>
@@ -155,7 +172,7 @@ export default function Menu() {
                 <span className="text-2xl">🍟</span> Crunchy Corner
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {MENU_ITEMS.filter((i) => i.type === 'fries').map((item) => (
+                {friesItems.map((item) => (
                   <ProductCard key={item.id} {...item} onClick={() => handleOpenModal(item)} />
                 ))}
               </div>
@@ -169,7 +186,7 @@ export default function Menu() {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={() => setLocation('/cart')}
+          onClick={handleNavigateToCart}
           className="bg-yellow-400 text-black p-4 rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.3)] border-4 border-white relative"
         >
           <ShoppingCart className="w-6 h-6" />
@@ -184,7 +201,7 @@ export default function Menu() {
       {/* Customization Modal */}
       <BlackboardModal
         isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
+        onClose={handleCloseModal}
         title={selectedItem?.title || ''}
         action={
           <button

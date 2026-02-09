@@ -88,7 +88,7 @@ ${orderItemsText}
     clearCart();
     
     // 4. Open WhatsApp
-    const waNumber = "6281234567890"; // Placeholder number
+    const waNumber = "6281284914453"; // Placeholder number
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
     

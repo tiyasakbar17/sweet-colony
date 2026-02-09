@@ -54,7 +54,7 @@ const CountdownTimer = memo(({ targetDate }: CountdownTimerProps) => {
     >
       <div className="backdrop-blur-md bg-white/10 rounded-2xl p-6 border-2 border-white/20 shadow-xl">
         <p className="text-[#f2c552] text-sm font-semibold uppercase tracking-wider mb-4">
-          Pre-Order Opens In
+          Event Start In
         </p>
         <div className="grid grid-cols-4 gap-3">
           {/* Days */}

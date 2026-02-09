@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { SplitBackground } from '@/components/SplitBackground';
-import { Store, UtensilsCrossed, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function Landing() {
   return (

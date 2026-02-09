@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { memo } from "react";
 import type { ReactNode } from "react";
 
 interface BlackboardModalProps {
@@ -10,18 +11,17 @@ interface BlackboardModalProps {
   action?: ReactNode;
 }
 
-export function BlackboardModal({ isOpen, onClose, title, children, action }: BlackboardModalProps) {
-  if (!isOpen) return null;
-
+export const BlackboardModal = memo(function BlackboardModal({ isOpen, onClose, title, children, action }: BlackboardModalProps) {
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      >
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        >
         <motion.div
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
@@ -49,7 +49,8 @@ export function BlackboardModal({ isOpen, onClose, title, children, action }: Bl
             </div>
           )}
         </motion.div>
-      </motion.div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
-}
+});

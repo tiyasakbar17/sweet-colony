@@ -1,14 +1,15 @@
+import { useMemo } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, ChevronLeft, ArrowRight, ReceiptText } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
-import { ProductCard } from "@/components/ProductCard";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, total } = useCart();
   const [, setLocation] = useLocation();
 
-  const totalPrice = total();
+  // Memoize total price calculation
+  const totalPrice = useMemo(() => total(), [total]);
 
   return (
     <div className="app-container flex flex-col bg-gray-50">

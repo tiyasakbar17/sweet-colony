@@ -1,31 +1,46 @@
+import { useMemo } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Check, Home } from "lucide-react";
 
 export default function Success() {
+  // Memoize decoration particles to prevent recalculating on each render
+  const decorationParticles = useMemo(() => 
+    Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      width: Math.random() * 20 + 10,
+      height: Math.random() * 20 + 10,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      duration: Math.random() * 2 + 2,
+      delay: Math.random() * 2,
+    })), 
+    []
+  );
+
   return (
     <div className="app-container flex flex-col items-center justify-center bg-green-500 text-white p-8 relative overflow-hidden">
       
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {decorationParticles.map((particle) => (
           <motion.div
-            key={i}
+            key={particle.id}
             className="absolute bg-white/20 rounded-full"
             style={{
-              width: Math.random() * 20 + 10,
-              height: Math.random() * 20 + 10,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              width: particle.width,
+              height: particle.height,
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
             }}
             animate={{
               y: [0, -100],
               opacity: [0, 1, 0],
             }}
             transition={{
-              duration: Math.random() * 2 + 2,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: particle.delay,
             }}
           />
         ))}

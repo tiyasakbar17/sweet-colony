@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
-import { ArrowLeft, ChefHat, ChevronLeftCircleIcon, X, ZoomIn } from 'lucide-react';
+import { ChefHat, ChevronLeftCircleIcon, X, ZoomIn } from 'lucide-react';
 import { SplitBackground } from '@/components/SplitBackground';
 
 export default function MenuDisplay() {
   const [, setLocation] = useLocation();
   const [isZoomed, setIsZoomed] = useState(false);
   const menuImageUrl = 'https://img.pikbest.com/templates/20240711/food-menu-card-template-design-for-restaurants-design_10662181.jpg!w700wp';
+  
+  const handleNavigateBack = useCallback(() => {
+    setLocation('/welcome');
+  }, [setLocation]);
+  
+  const handleOpenZoom = useCallback(() => {
+    setIsZoomed(true);
+  }, []);
+  
+  const handleCloseZoom = useCallback(() => {
+    setIsZoomed(false);
+  }, []);
 
   return (
     <div className="app-container flex flex-col h-full bg-slate-50 relative">
@@ -17,7 +29,7 @@ export default function MenuDisplay() {
         {/* Header with Back Button */}
         <section className="p-4 mb-4 z-20 flex items-center gap-4 sticky top-0">
           <button
-            onClick={() => setLocation('/welcome')}
+            onClick={handleNavigateBack}
             className="flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             <ChevronLeftCircleIcon className="text-[#f2c552] w-10 h-10" />
@@ -43,7 +55,7 @@ export default function MenuDisplay() {
               {/* Menu Image Container */}
               <div 
                 className="bg-black/20 rounded-2xl p-4 border-2 border-white/10 cursor-pointer hover:bg-black/30 transition-all group relative"
-                onClick={() => setIsZoomed(true)}
+                onClick={handleOpenZoom}
               >
                 <img
                   src={menuImageUrl}
@@ -91,7 +103,7 @@ export default function MenuDisplay() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-            onClick={() => setIsZoomed(false)}
+            onClick={handleCloseZoom}
           >
             {/* Close Button */}
             <motion.button
@@ -99,7 +111,7 @@ export default function MenuDisplay() {
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ delay: 0.1 }}
-              onClick={() => setIsZoomed(false)}
+              onClick={handleCloseZoom}
               className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full p-3 border border-white/20 transition-colors z-10"
             >
               <X className="w-6 h-6 text-white" />
