@@ -10,6 +10,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useCreateOrder } from "@/hooks/use-orders";
 import { insertOrderSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import process from "process";
 
 // Schema for form validation
 const checkoutFormSchema = z.object({
@@ -28,6 +29,7 @@ export default function Checkout() {
   const createOrder = useCreateOrder();
   
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
   
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -44,55 +46,95 @@ export default function Checkout() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate it's an image
+      if (!file.type.startsWith('image/')) {
+        toast({ 
+          title: "Invalid file type", 
+          description: "Please upload an image file",
+          variant: "destructive"
+        });
+        return;
+      }
       const url = URL.createObjectURL(file);
       setProofPreview(url);
+      setProofFile(file);
     }
   };
 
   const onSubmit = async (data: CheckoutFormValues) => {
-    // 1. Prepare WhatsApp Message
-    const orderItemsText = items.map(i => 
-      `- ${i.name} (${i.variant})${i.addons.length ? ` w/ ${i.addons.join(', ')}` : ''} x${i.quantity}`
-    ).join('\n');
-    
-    const totalText = total().toLocaleString();
-    
-    const message = `
-*New Order from Sweet Colony!* 🍬
+    // Validate file upload for transfer payment
+    if (data.paymentMethod === 'transfer' && !proofFile) {
+      toast({ 
+        title: "Payment proof required", 
+        description: "Please upload payment proof for transfer payments",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // 1. Prepare message
+      const orderItemsText = items.map(i => 
+        `- ${i.name} (${i.variant})${i.addons.length ? ` w/ ${i.addons.join(', ')}` : ''} x${i.quantity}`
+      ).join('\n');
+      
+      const totalText = total().toLocaleString();
+      
+      const message = `*New Order from Sweet Colony!* 🍬
 
 *Name:* ${data.name}
 *Class:* ${data.class}
+*WhatsApp:* ${data.whatsapp}
 *Payment:* ${data.paymentMethod.toUpperCase()}
 
 *Order Details:*
 ${orderItemsText}
 
-*Total: Rp ${totalText}*
-    `.trim();
+*Total: Rp ${totalText}*`;
 
-    // 2. Log to backend (optional, non-blocking)
-    try {
-      await createOrder.mutateAsync({
-        name: data.name,
-        class: data.class,
-        whatsapp: data.whatsapp,
-        paymentMethod: data.paymentMethod,
-        total: total(),
-        items: items
+      // 2. Prepare form data
+      const formData = new FormData();
+      formData.append('message', message);
+      formData.append('payment_method', data.paymentMethod === 'cash' ? 'COD' : 'TRANSFER');
+      formData.append('name', data.name);
+      formData.append('class', data.class);
+      
+      // Add file only if transfer
+      if (data.paymentMethod === 'transfer' && proofFile) {
+        formData.append('attachment', proofFile);
+      }
+
+      // 3. Send to webhook
+      const response = await fetch('https://n8ntiyas.tiyasakbar.my.id/webhook/create-order', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          // Do NOT set Content-Type - browser will set it with boundary automatically
+          'x-server-key': process.env.NEXT_PUBLIC_SERVER_KEY || '',
+        }
       });
-    } catch (err) {
-      console.warn("Backend log failed, proceeding to WA");
-    }
 
-    // 3. Clear Cart & Redirect
-    clearCart();
-    
-    // 4. Open WhatsApp
-    const waNumber = "6281284914453"; // Placeholder number
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
-    
-    setLocation("/success");
+      if (!response.ok) {
+        throw new Error('Failed to submit order');
+      }
+
+      // 4. Success - clear cart and redirect
+      toast({ 
+        title: "Order submitted! ✨", 
+        description: "Your order has been sent successfully"
+      });
+      
+      clearCart();
+      setLocation("/success");
+      
+    } catch (error) {
+      console.error('Order submission failed:', error);
+      toast({ 
+        title: "Order failed", 
+        description: "Failed to submit order. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -249,12 +291,20 @@ ${orderItemsText}
             disabled={form.formState.isSubmitting}
             className="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <span>Send Order via WhatsApp</span>
+            <span>{form.formState.isSubmitting ? 'Submitting...' : 'Submit Order'}</span>
             <Send className="w-5 h-5" />
           </button>
           
           <p className="text-center text-xs text-gray-400">
-            You will be redirected to WhatsApp to finalize your order.
+            {paymentMethod === 'transfer' && !proofFile && (
+              <span className="text-red-500 font-medium">⚠️ Payment proof required for transfer payments</span>
+            )}
+            {paymentMethod === 'transfer' && proofFile && (
+              <span className="text-green-600 font-medium">✓ Payment proof attached</span>
+            )}
+            {paymentMethod === 'cash' && (
+              <span>Your order will be confirmed shortly</span>
+            )}
           </p>
 
         </form>
