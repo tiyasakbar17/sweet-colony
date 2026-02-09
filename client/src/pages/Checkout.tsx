@@ -10,7 +10,6 @@ import { useCart } from "@/hooks/use-cart";
 import { useCreateOrder } from "@/hooks/use-orders";
 import { insertOrderSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import process from "process";
 
 // Schema for form validation
 const checkoutFormSchema = z.object({
@@ -110,7 +109,7 @@ ${orderItemsText}
         body: formData,
         headers: {
           // Do NOT set Content-Type - browser will set it with boundary automatically
-          'x-server-key': process.env.NEXT_PUBLIC_SERVER_KEY || '',
+          'x-server-key': import.meta.env.VITE_SERVER_KEY || '',
         }
       });
 
