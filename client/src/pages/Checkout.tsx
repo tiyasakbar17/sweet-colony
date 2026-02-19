@@ -1,22 +1,25 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useLocation, Link } from "wouter";
-import { ChevronLeft, Check, Camera, Send } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useLocation, Link } from 'wouter';
+import { ChevronLeft, Check, Camera, Send } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import { useCart } from "@/hooks/use-cart";
-import { useCreateOrder } from "@/hooks/use-orders";
-import { insertOrderSchema } from "@shared/schema";
-import { useToast } from "@/hooks/use-toast";
+import { useCart } from '@/hooks/use-cart';
+import { useCreateOrder } from '@/hooks/use-orders';
+import { insertOrderSchema } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
 
 // Schema for form validation
 const checkoutFormSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  class: z.string().min(1, "Class is required"),
-  whatsapp: z.string().min(9, "Valid WhatsApp number required").regex(/^\+?[\d\s-]+$/, "Invalid phone number"),
-  paymentMethod: z.enum(["cash", "transfer"]),
+  name: z.string().min(2, 'Name is required'),
+  class: z.string().min(1, 'Class is required'),
+  whatsapp: z
+    .string()
+    .min(9, 'Valid WhatsApp number required')
+    .regex(/^\+?[\d\s-]+$/, 'Invalid phone number'),
+  paymentMethod: z.enum(['cash', 'transfer']),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
@@ -26,31 +29,31 @@ export default function Checkout() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const createOrder = useCreateOrder();
-  
+
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [proofFile, setProofFile] = useState<File | null>(null);
-  
+
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
-      paymentMethod: "cash",
-      whatsapp: "",
-      name: "",
-      class: ""
-    }
+      paymentMethod: 'cash',
+      whatsapp: '',
+      name: '',
+      class: '',
+    },
   });
 
-  const paymentMethod = form.watch("paymentMethod");
+  const paymentMethod = form.watch('paymentMethod');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate it's an image
       if (!file.type.startsWith('image/')) {
-        toast({ 
-          title: "Invalid file type", 
-          description: "Please upload an image file",
-          variant: "destructive"
+        toast({
+          title: 'Invalid file type',
+          description: 'Please upload an image file',
+          variant: 'destructive',
         });
         return;
       }
@@ -63,22 +66,22 @@ export default function Checkout() {
   const onSubmit = async (data: CheckoutFormValues) => {
     // Validate file upload for transfer payment
     if (data.paymentMethod === 'transfer' && !proofFile) {
-      toast({ 
-        title: "Payment proof required", 
-        description: "Please upload payment proof for transfer payments",
-        variant: "destructive"
+      toast({
+        title: 'Payment proof required',
+        description: 'Please upload payment proof for transfer payments',
+        variant: 'destructive',
       });
       return;
     }
 
     try {
       // 1. Prepare message
-      const orderItemsText = items.map(i => 
-        `- ${i.name} (${i.variant})${i.addons.length ? ` w/ ${i.addons.join(', ')}` : ''} x${i.quantity}`
-      ).join('\n');
-      
+      const orderItemsText = items
+        .map((i) => `- ${i.name} (${i.variant})${i.addons.length ? ` w/ ${i.addons.join(', ')}` : ''} x${i.quantity}`)
+        .join('\n');
+
       const totalText = total().toLocaleString();
-      
+
       const message = `*New Order from Sweet Colony!* 🍬
 
 *Name:* ${data.name}
@@ -97,20 +100,20 @@ ${orderItemsText}
       formData.append('payment_method', data.paymentMethod === 'cash' ? 'COD' : 'TRANSFER');
       formData.append('name', data.name);
       formData.append('class', data.class);
-      
+
       // Add file only if transfer
       if (data.paymentMethod === 'transfer' && proofFile) {
         formData.append('attachment', proofFile);
       }
 
       // 3. Send to webhook
-      const response = await fetch('https://n8ntiyas.tiyasakbar.my.id/webhook/create-order', {
+      const response = await fetch('https://n8ntiyas.tiyasakbar.my.id/webhook/sweet-colony/create-order', {
         method: 'POST',
         body: formData,
         headers: {
           // Do NOT set Content-Type - browser will set it with boundary automatically
           'x-server-key': import.meta.env.VITE_SERVER_KEY || '',
-        }
+        },
       });
 
       if (!response.ok) {
@@ -118,20 +121,19 @@ ${orderItemsText}
       }
 
       // 4. Success - clear cart and redirect
-      toast({ 
-        title: "Order submitted! ✨", 
-        description: "Your order has been sent successfully"
+      toast({
+        title: 'Order submitted! ✨',
+        description: 'Your order has been sent successfully',
       });
-      
+
       clearCart();
-      setLocation("/success");
-      
+      setLocation('/success');
     } catch (error) {
       console.error('Order submission failed:', error);
-      toast({ 
-        title: "Order failed", 
-        description: "Failed to submit order. Please try again.",
-        variant: "destructive"
+      toast({
+        title: 'Order failed',
+        description: 'Failed to submit order. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -150,43 +152,50 @@ ${orderItemsText}
 
       <main className="p-6 pb-24">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          
           {/* Personal Info Section */}
           <section className="space-y-4">
             <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-xs">1</span>
+              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-xs">
+                1
+              </span>
               Student Details
             </h2>
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input 
-                  {...form.register("name")}
+                <input
+                  {...form.register('name')}
                   className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   placeholder="e.g. Budi Santoso"
                 />
-                {form.formState.errors.name && <p className="text-red-500 text-xs mt-1">{form.formState.errors.name.message}</p>}
+                {form.formState.errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{form.formState.errors.name.message}</p>
+                )}
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Class</label>
-                  <input 
-                    {...form.register("class")}
+                  <input
+                    {...form.register('class')}
                     className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="e.g. XII IPA 2"
                   />
-                  {form.formState.errors.class && <p className="text-red-500 text-xs mt-1">{form.formState.errors.class.message}</p>}
+                  {form.formState.errors.class && (
+                    <p className="text-red-500 text-xs mt-1">{form.formState.errors.class.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                  <input 
-                    {...form.register("whatsapp")}
+                  <input
+                    {...form.register('whatsapp')}
                     className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="0812..."
                     type="tel"
                   />
-                  {form.formState.errors.whatsapp && <p className="text-red-500 text-xs mt-1">{form.formState.errors.whatsapp.message}</p>}
+                  {form.formState.errors.whatsapp && (
+                    <p className="text-red-500 text-xs mt-1">{form.formState.errors.whatsapp.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -194,36 +203,32 @@ ${orderItemsText}
 
           {/* Payment Section */}
           <section className="space-y-4">
-             <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-xs">2</span>
+            <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-xs">
+                2
+              </span>
               Payment Method
             </h2>
-            
+
             <div className="grid grid-cols-2 gap-4">
-              <label className={`
+              <label
+                className={`
                 cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2
                 ${paymentMethod === 'cash' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'}
-              `}>
-                <input 
-                  type="radio" 
-                  value="cash" 
-                  className="hidden" 
-                  {...form.register("paymentMethod")}
-                />
+              `}
+              >
+                <input type="radio" value="cash" className="hidden" {...form.register('paymentMethod')} />
                 <span className="font-bold">Cash / COD</span>
                 <span className="text-xs text-center opacity-70">Pay when receiving</span>
               </label>
 
-              <label className={`
+              <label
+                className={`
                 cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2
                 ${paymentMethod === 'transfer' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 hover:border-gray-300'}
-              `}>
-                <input 
-                  type="radio" 
-                  value="transfer" 
-                  className="hidden" 
-                  {...form.register("paymentMethod")}
-                />
+              `}
+              >
+                <input type="radio" value="transfer" className="hidden" {...form.register('paymentMethod')} />
                 <span className="font-bold">Bank Transfer</span>
                 <span className="text-xs text-center opacity-70">BCA / QRIS</span>
               </label>
@@ -246,11 +251,11 @@ ${orderItemsText}
                           <p className="font-bold text-gray-800">BCA</p>
                           <p className="text-sm text-gray-600">1234567890 (Sweet Colony)</p>
                         </div>
-                        <button 
+                        <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText("1234567890");
-                            toast({ title: "Copied!", duration: 1000 });
+                            navigator.clipboard.writeText('1234567890');
+                            toast({ title: 'Copied!', duration: 1000 });
                           }}
                           className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded"
                         >
@@ -293,7 +298,7 @@ ${orderItemsText}
             <span>{form.formState.isSubmitting ? 'Submitting...' : 'Submit Order'}</span>
             <Send className="w-5 h-5" />
           </button>
-          
+
           <p className="text-center text-xs text-gray-400">
             {paymentMethod === 'transfer' && !proofFile && (
               <span className="text-red-500 font-medium">⚠️ Payment proof required for transfer payments</span>
@@ -301,11 +306,8 @@ ${orderItemsText}
             {paymentMethod === 'transfer' && proofFile && (
               <span className="text-green-600 font-medium">✓ Payment proof attached</span>
             )}
-            {paymentMethod === 'cash' && (
-              <span>Your order will be confirmed shortly</span>
-            )}
+            {paymentMethod === 'cash' && <span>Your order will be confirmed shortly</span>}
           </p>
-
         </form>
       </main>
     </div>
