@@ -97,9 +97,9 @@ export default function Menu() {
   const toggleAddon = useCallback(
     (addon: string) => {
       if (selectedAddons.includes(addon)) {
-        setSelectedAddons((prev) => prev.filter((a) => a !== addon));
+        setSelectedAddons([]);
       } else {
-        setSelectedAddons((prev) => [...prev, addon]);
+        setSelectedAddons([addon]);
       }
     },
     [selectedAddons],
@@ -297,10 +297,12 @@ export default function Menu() {
                     `}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full border ${
-                        selectedAddons.includes(addon) ? 'bg-yellow-400 border-yellow-400' : 'border-gray-500'
+                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        selectedAddons.includes(addon) ? 'border-yellow-400' : 'border-gray-500'
                       }`}
-                    />
+                    >
+                      {selectedAddons.includes(addon) && <div className="w-2 h-2 rounded-full bg-yellow-400" />}
+                    </div>
                     {addon}
                   </button>
                 ))}

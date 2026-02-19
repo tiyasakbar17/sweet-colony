@@ -249,12 +249,12 @@ ${orderItemsText}
                       <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-yellow-200">
                         <div>
                           <p className="font-bold text-gray-800">BCA</p>
-                          <p className="text-sm text-gray-600">1234567890 (Sweet Colony)</p>
+                          <p className="text-sm text-gray-600">814-057-5764 (Raynard)</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText('1234567890');
+                            navigator.clipboard.writeText('8140575764');
                             toast({ title: 'Copied!', duration: 1000 });
                           }}
                           className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded"
