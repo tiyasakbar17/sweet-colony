@@ -130,7 +130,7 @@ const SocialIcons = memo(function SocialIcons() {
         <Instagram className="w-12 h-12 text-white" />
       </a>
       <a
-        href="https://wa.me/6281284914453"
+        href="https://wa.me/6281513512116"
         target="_blank"
         rel="noopener noreferrer"
         className="backdrop-blur-md rounded-[10px] shadow-lg hover:scale-110 transition-transform"
