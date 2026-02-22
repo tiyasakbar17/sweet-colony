@@ -265,6 +265,24 @@ ${orderItemsText}
                     </div>
 
                     <div>
+                      <p className="text-sm text-yellow-800 font-semibold mb-2">QRIS: </p>
+                      <div className="bg-white border border-yellow-200 rounded-lg p-3 flex flex-col items-center gap-2">
+                        <img
+                          src={
+                            import.meta.env.VITE_QRIS_IMAGE ??
+                            'https://s7d9.scene7.com/is/image/daltile/AO_MN44_24x24_Gray_Polished?$PRODUCTIMAGE$'
+                          }
+                          alt="QRIS Payment Code"
+                          className="w-60 h-60 object-contain rounded-md"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        <p className="text-xs text-gray-500 text-center">Scan to pay via QRIS</p>
+                      </div>
+                    </div>
+
+                    <div>
                       <p className="text-sm text-yellow-800 font-semibold mb-2">Upload Proof</p>
                       <label className="block w-full border-2 border-dashed border-yellow-300 rounded-lg p-4 cursor-pointer hover:bg-yellow-100/50 transition-colors text-center">
                         <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />

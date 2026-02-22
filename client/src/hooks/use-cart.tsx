@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export type CartItem = {
   id: string;
   name: string;
-  type: 'icecream' | 'fries';
+  type: 'icecream' | 'fries' | 'photobooth';
   variant: string; // Flavor or Size
   addons: string[]; // Toppings or Seasonings
   price: number;

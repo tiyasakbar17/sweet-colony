@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
 interface ProductCardProps {
-  type: 'icecream' | 'fries';
+  type: 'icecream' | 'fries' | 'photobooth';
   title: string;
   price: number;
   image?: string;
@@ -12,9 +12,10 @@ interface ProductCardProps {
 
 export const ProductCard = memo(function ProductCard({ type, title, price, image, onClick }: ProductCardProps) {
   const isIce = type === 'icecream';
-  const bgColor = isIce ? 'bg-blue-100' : 'bg-red-100';
-  const borderColor = isIce ? 'border-blue-300' : 'border-red-300';
-  const textColor = isIce ? 'text-blue-800' : 'text-red-800';
+  const isPhotobooth = type === 'photobooth';
+  const bgColor = isIce ? 'bg-blue-100' : isPhotobooth ? 'bg-purple-100' : 'bg-red-100';
+  const borderColor = isIce ? 'border-blue-300' : isPhotobooth ? 'border-purple-300' : 'border-red-300';
+  const textColor = isIce ? 'text-blue-800' : isPhotobooth ? 'text-purple-800' : 'text-red-800';
 
   return (
     <motion.div
@@ -35,7 +36,7 @@ export const ProductCard = memo(function ProductCard({ type, title, price, image
           {image ? (
             <img src={image} alt={title} className="w-full h-full object-cover drop-shadow-md" />
           ) : (
-            <span>{isIce ? '🍦' : '🍟'}</span>
+            <span>{isIce ? '🍦' : isPhotobooth ? '📸' : '🍟'}</span>
           )}
         </div>
 
@@ -46,7 +47,7 @@ export const ProductCard = memo(function ProductCard({ type, title, price, image
         
         <div className={`
           absolute bottom-0 right-0 p-3 
-          ${isIce ? 'bg-blue-500' : 'bg-red-500'} 
+          ${isIce ? 'bg-blue-500' : isPhotobooth ? 'bg-purple-500' : 'bg-red-500'} 
           rounded-tl-2xl text-white
           shadow-lg group-hover:scale-110 transition-transform
         `}>

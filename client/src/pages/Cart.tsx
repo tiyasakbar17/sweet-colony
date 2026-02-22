@@ -46,8 +46,8 @@ export default function Cart() {
                   className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4"
                 >
                   {/* Thumbnail */}
-                  <div className={`w-20 h-20 rounded-lg flex items-center justify-center text-2xl shrink-0 ${item.type === 'icecream' ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-500'}`}>
-                    {item.type === 'icecream' ? '🍦' : '🍟'}
+                  <div className={`w-20 h-20 rounded-lg flex items-center justify-center text-2xl shrink-0 ${item.type === 'icecream' ? 'bg-blue-50 text-blue-500' : item.type === 'photobooth' ? 'bg-purple-50 text-purple-500' : 'bg-red-50 text-red-500'}`}>
+                    {item.type === 'icecream' ? '🍦' : item.type === 'photobooth' ? '📸' : '🍟'}
                   </div>
 
                   {/* Details */}

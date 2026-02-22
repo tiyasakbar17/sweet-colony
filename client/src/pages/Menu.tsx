@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { ShoppingCart, ChefHat, IceCream, Minus, Plus, ChevronLeftCircleIcon } from 'lucide-react';
+import { ShoppingCart, ChefHat, IceCream, Minus, Plus, ChevronLeftCircleIcon, Camera } from 'lucide-react';
 import { SplitBackground } from '@/components/SplitBackground';
 import { ProductCard } from '@/components/ProductCard';
 import { BlackboardModal } from '@/components/BlackboardModal';
@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface MenuItem {
   id: number;
-  type: 'icecream' | 'fries';
+  type: 'icecream' | 'fries' | 'photobooth';
   title: string;
   price: number;
   image: string;
@@ -51,6 +51,7 @@ export default function Menu() {
   // Memoize filtered menu items to prevent recalculation
   const iceCreamItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'icecream') ?? [], [menuData]);
   const friesItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'fries') ?? [], [menuData]);
+  const photoboothItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'photobooth') ?? [], [menuData]);
 
   // Memoize cart count calculation
   const cartCount = useMemo(() => items.reduce((acc, item) => acc + item.quantity, 0), [items]);
@@ -217,6 +218,22 @@ export default function Menu() {
               </div>
             </div>
           </section>
+
+          {/* Photobooth Section */}
+          {photoboothItems.length > 0 && (
+            <section>
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-xl border-2 border-purple-200">
+                <h2 className="text-2xl font-bold text-purple-600 mb-4 flex items-center gap-2">
+                  <Camera className="w-6 h-6" /> Photobooth
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {photoboothItems.map((item) => (
+                    <ProductCard key={item.id} {...item} onClick={() => handleOpenModal(item)} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </main>
 
@@ -254,30 +271,33 @@ export default function Menu() {
         {selectedItem && (
           <div className="space-y-6 text-chalk">
             {/* Size Selection */}
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-3 font-semibold">Choose Size</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {(menuData?.sizes[selectedItem.type] ?? []).map((size) => (
-                  <button
-                    key={size.label}
-                    onClick={() => setSelectedSize(size.label)}
-                    className={`
-                      py-2 px-3 rounded-lg border text-sm font-medium transition-all
-                      ${
-                        selectedSize === size.label
-                          ? 'bg-white text-black border-white'
-                          : 'bg-transparent text-gray-400 border-gray-600 hover:border-gray-400'
-                      }
-                    `}
-                  >
-                    {size.label}
-                    {size.price > 0 && <span className="block text-xs opacity-70">+{size.price / 1000}k</span>}
-                  </button>
-                ))}
+            {(menuData?.sizes[selectedItem.type] ?? []).length > 0 && (
+              <div>
+                <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-3 font-semibold">Choose Size</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {(menuData?.sizes[selectedItem.type] ?? []).map((size) => (
+                    <button
+                      key={size.label}
+                      onClick={() => setSelectedSize(size.label)}
+                      className={`
+                        py-2 px-3 rounded-lg border text-sm font-medium transition-all
+                        ${
+                          selectedSize === size.label
+                            ? 'bg-white text-black border-white'
+                            : 'bg-transparent text-gray-400 border-gray-600 hover:border-gray-400'
+                        }
+                      `}
+                    >
+                      {size.label}
+                      {size.price > 0 && <span className="block text-xs opacity-70">+{size.price / 1000}k</span>}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Addons Selection */}
+            {(menuData?.addons[selectedItem.type] ?? []).length > 0 && (
             <div>
               <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-3 font-semibold">
                 {selectedItem.type === 'icecream' ? 'Toppings' : 'Seasoning'}
@@ -308,6 +328,7 @@ export default function Menu() {
                 ))}
               </div>
             </div>
+            )}
 
             {/* Quantity Selection */}
             <div>
