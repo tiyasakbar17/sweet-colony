@@ -264,7 +264,7 @@ ${orderItemsText}
                       </div>
                     </div>
 
-                    <div>
+                    { import.meta.env.VITE_QRIS_IMAGE && <div>
                       <p className="text-sm text-yellow-800 font-semibold mb-2">QRIS: </p>
                       <div className="bg-white border border-yellow-200 rounded-lg p-3 flex flex-col items-center gap-2">
                         <img
@@ -280,7 +280,7 @@ ${orderItemsText}
                         />
                         <p className="text-xs text-gray-500 text-center">Scan to pay via QRIS</p>
                       </div>
-                    </div>
+                    </div>}
 
                     <div>
                       <p className="text-sm text-yellow-800 font-semibold mb-2">Upload Proof</p>

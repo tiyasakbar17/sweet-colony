@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface MenuItem {
   id: number;
-  type: 'icecream' | 'fries' | 'photobooth';
+  type: 'icecream' | 'fries' | 'photobooth' | 'coming-soon';
   title: string;
   price: number;
   image: string;
@@ -52,19 +52,23 @@ export default function Menu() {
   const iceCreamItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'icecream') ?? [], [menuData]);
   const friesItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'fries') ?? [], [menuData]);
   const photoboothItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'photobooth') ?? [], [menuData]);
+  const comingSoonItems = useMemo(() => menuData?.menu.filter((i) => i.type === 'coming-soon') ?? [], [menuData]);
 
   // Memoize cart count calculation
   const cartCount = useMemo(() => items.reduce((acc, item) => acc + item.quantity, 0), [items]);
 
-  const handleOpenModal = useCallback((item: MenuItem) => {
-    setSelectedItem(item);
-    // Set default size
-    const sizes = menuData?.sizes[item.type] ?? [];
-    const defaultSize = sizes[0]?.label ?? '';
-    setSelectedSize(defaultSize);
-    setSelectedAddons([]);
-    setQuantity(1); // Reset quantity to 1
-  }, [menuData]);
+  const handleOpenModal = useCallback(
+    (item: MenuItem) => {
+      setSelectedItem(item);
+      // Set default size
+      const sizes = menuData?.sizes[item.type] ?? [];
+      const defaultSize = sizes[0]?.label ?? '';
+      setSelectedSize(defaultSize);
+      setSelectedAddons([]);
+      setQuantity(1); // Reset quantity to 1
+    },
+    [menuData],
+  );
 
   const handleCloseModal = useCallback(() => {
     setSelectedItem(null);
@@ -234,6 +238,22 @@ export default function Menu() {
               </div>
             </section>
           )}
+
+          {/* Coming Soon Section */}
+          {comingSoonItems.length > 0 && (
+            <section>
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-xl border-2 border-gray-300">
+                <h2 className="text-2xl font-bold text-gray-500 mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🔜</span> Coming Soon
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {comingSoonItems.map((item) => (
+                    <ProductCard key={item.id} {...item} onClick={() => {}} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </main>
 
@@ -298,16 +318,16 @@ export default function Menu() {
 
             {/* Addons Selection */}
             {(menuData?.addons[selectedItem.type] ?? []).length > 0 && (
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-3 font-semibold">
-                {selectedItem.type === 'icecream' ? 'Toppings' : 'Seasoning'}
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {(menuData?.addons[selectedItem.type] ?? []).map((addon) => (
-                  <button
-                    key={addon}
-                    onClick={() => toggleAddon(addon)}
-                    className={`
+              <div>
+                <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-3 font-semibold">
+                  {selectedItem.type === 'icecream' ? 'Toppings' : 'Seasoning'}
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {(menuData?.addons[selectedItem.type] ?? []).map((addon) => (
+                    <button
+                      key={addon}
+                      onClick={() => toggleAddon(addon)}
+                      className={`
                       py-2 px-3 rounded-lg border text-sm text-left transition-all flex items-center gap-2
                       ${
                         selectedAddons.includes(addon)
@@ -315,19 +335,19 @@ export default function Menu() {
                           : 'bg-transparent border-gray-700 text-gray-400 hover:border-gray-500'
                       }
                     `}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        selectedAddons.includes(addon) ? 'border-yellow-400' : 'border-gray-500'
-                      }`}
                     >
-                      {selectedAddons.includes(addon) && <div className="w-2 h-2 rounded-full bg-yellow-400" />}
-                    </div>
-                    {addon}
-                  </button>
-                ))}
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          selectedAddons.includes(addon) ? 'border-yellow-400' : 'border-gray-500'
+                        }`}
+                      >
+                        {selectedAddons.includes(addon) && <div className="w-2 h-2 rounded-full bg-yellow-400" />}
+                      </div>
+                      {addon}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
 
             {/* Quantity Selection */}
@@ -359,7 +379,10 @@ export default function Menu() {
                 <span className="text-gray-400 text-sm">Unit Price</span>
                 <span className="text-white font-medium">
                   Rp{' '}
-                  {(selectedItem.price + ((menuData?.sizes[selectedItem.type] ?? []).find((s) => s.label === selectedSize)?.price || 0)).toLocaleString()}
+                  {(
+                    selectedItem.price +
+                    ((menuData?.sizes[selectedItem.type] ?? []).find((s) => s.label === selectedSize)?.price || 0)
+                  ).toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-white/10">
